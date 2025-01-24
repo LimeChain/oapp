@@ -1,6 +1,7 @@
-import pkg from '@coral-xyz/anchor';
-import lzv2 from '@layerzerolabs/lz-solana-sdk-v2';
-const { web3, Wallet, AnchorProvider, setProvider, Program, Address } = pkg;
+
+import  {web3, Wallet, AnchorProvider, setProvider, Program, Address} from '@coral-xyz/anchor';
+import { EndpointProgram, EventPDADeriver } from '@layerzerolabs/lz-solana-sdk-v2';
+
 import { readFileSync } from "fs";
 
 (async () => {
@@ -46,19 +47,40 @@ import { readFileSync } from "fs";
       [Buffer.from("global_config")],
       program.programId
     );
+    console.log("Global config pubkey:", gc.toBase58());
 
     const [solVault, solVaultBump] = web3.PublicKey.findProgramAddressSync(
       [Buffer.from("sol_vault")],
       program.programId
     );
+    console.log("Sol vault pubkey:", solVault.toBase58());
 
     const endpointPubkey = new web3.PublicKey("76y77prsiCMvXMjuoZ5VRrhG5qYBrUMYTE5WgHqgjEn6")
-    const [oappPubkey, oappBump] = web3.PublicKey.findProgramAddressSync(
-      [Buffer.from("oapp"), program.programId.toBuffer()],
-      endpointPubkey
+    const endpoint = new EndpointProgram.Endpoint(endpointPubkey)
+    const [oAppRegistry] = endpoint.deriver.oappRegistry(solVault);
+    const [eventAuthority] = new EventPDADeriver(endpoint.program).eventAuthority()
+    const ixAccounts = EndpointProgram.instructions.createRegisterOappInstructionAccounts(
+      {
+        payer: authority,
+        oapp: solVault,
+        oappRegistry: oAppRegistry,
+        eventAuthority,
+        program: endpoint.program,
+      },
+      endpoint.program,
     );
 
-    console.log("Oapp pubkey:", oappPubkey.toBase58());
+    const registerOAppAccounts = [
+      {
+          pubkey: endpoint.program,
+          isSigner: false,
+          isWritable: false,
+      },
+      ...ixAccounts,
+    ]
+
+    registerOAppAccounts[1].isSigner = false
+    registerOAppAccounts[2].isSigner = false
 
     console.log("Initializing program...");
     await program.methods
@@ -69,15 +91,7 @@ import { readFileSync } from "fs";
         solVault,
         systemProgram: web3.SystemProgram.programId,
       })
-      .remainingAccounts([
-        {pubkey: endpointPubkey, isWritable: false, isSigner: false},
-        {pubkey: oappPubkey, isWritable: true, isSigner: false},
-        {pubkey: program.programId, isWritable: true, isSigner: false}, // dunno
-        {pubkey: program.programId, isWritable: true, isSigner: false}, // dunno
-        {pubkey: authority, isWritable: true, isSigner: true},
-        {pubkey: web3.SystemProgram.programId, isWritable: true, isSigner: false}, // dunno
-        {pubkey: web3.SystemProgram.programId, isWritable: true, isSigner: false}, // dunno
-      ])
+      .remainingAccounts(registerOAppAccounts)
       .signers([keypair])
       .rpc();
 

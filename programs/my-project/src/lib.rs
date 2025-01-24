@@ -55,11 +55,13 @@ impl Initialize<'_> {
         global_config.default_chain_id = 1;
         global_config.out_nonce = 0;
 
+        let sol_vault = &mut ctx.accounts.sol_vault;
+
         msg!("Global config initialized");
         msg!("Registering OAPP");
         oapp::endpoint_cpi::register_oapp(
             oapp::endpoint::ID,
-            *ctx.program_id,
+            sol_vault.key(),
             ctx.remaining_accounts,
             &[b"sol_vault".as_ref(), &[ctx.bumps.sol_vault]],
             RegisterOAppParams {
