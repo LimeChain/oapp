@@ -1,13 +1,17 @@
 use anchor_lang::prelude::*;
-use oapp::endpoint_cpi::send;
 use endpoint::instructions::oapp::SendParams;
 use endpoint::MessagingReceipt;
+use oapp::endpoint_cpi::send;
 
-pub fn send_message(
-    ctx: Context<Send>,
-    params: SendParams,
-) -> Result<MessagingReceipt> {
-    let receipt = send(*ctx.accounts.sender.key, *ctx.accounts.endpoint_program.key, &[], &[], params)?;
+pub fn send_message(ctx: Context<Send>, params: SendParams) -> Result<MessagingReceipt> {
+    let receipt = send(
+        *ctx.accounts.sender.key,
+        *ctx.accounts.endpoint_program.key,
+        &[],
+        &[],
+        params,
+    )?;
+
     Ok(receipt)
 }
 

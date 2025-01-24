@@ -1,28 +1,22 @@
 use anchor_lang::prelude::*;
-use endpoint::MessagingReceipt;
 use endpoint::instructions::oapp::SendParams;
+use endpoint::MessagingReceipt;
 use oapp::endpoint::instructions::RegisterOAppParams;
 
 mod instructions;
 mod state;
 
 use instructions::*;
-use state::{Admin, GlobalConfig, TokenList};
+use state::GlobalConfig;
 
-declare_id!("5midd7yfem3sFitDwsQVCUEwyUrcEkZdHjevVJqt1Gye");
+declare_id!("GG9GMa3Y7ow2j9jRgbTusBHc57VUh55G4wfbVskhjkbh");
 
 #[program]
 pub mod my_project {
     use super::*;
 
-    pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
-        // Initialize global config
-        let global_config = &mut ctx.accounts.global_config;
-        global_config.allow_deposit = true;
-        global_config.program_paused = false;
-        global_config.native_deposits_restricted = false;
-
-        Ok(())
+    pub fn initialize(mut ctx: Context<Initialize>, params: InitParams) -> Result<()> {
+        Initialize::apply(&mut ctx, params)
     }
 
     pub fn send(ctx: Context<Send>, params: SendParams) -> Result<MessagingReceipt> {
@@ -61,13 +55,15 @@ impl Initialize<'_> {
         global_config.default_chain_id = 1;
         global_config.out_nonce = 0;
 
+        msg!("Global config initialized");
+        msg!("Registering OAPP");
         oapp::endpoint_cpi::register_oapp(
             oapp::endpoint::ID,
             *ctx.program_id,
-            &[],
+            ctx.remaining_accounts,
             &[b"sol_vault".as_ref(), &[ctx.bumps.sol_vault]],
             RegisterOAppParams {
-                delegate: params.portfolio,
+                delegate: ctx.accounts.authority.key(),
             },
         )?;
 

@@ -8,3 +8,8 @@ test-ledger
 .yarn
 .idea
 .vscode
+*.json
+
+!package.json
+!package-lock.json
+!tsconfig.json
