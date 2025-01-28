@@ -1,10 +1,10 @@
 use anchor_lang::prelude::*;
 
-pub const MAX_TOKENS: usize = 20;
-pub const NATIVE_SYMBOL: [u8; 32] = [
-    83, 79, 76, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0,
-];
+// pub const MAX_TOKENS: usize = 20;
+// pub const NATIVE_SYMBOL: [u8; 32] = [
+//     83, 79, 76, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+//     0,
+// ];
 
 // ACCOUNTS
 #[account]
