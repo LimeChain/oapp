@@ -12,7 +12,7 @@ declare_id!("GG9GMa3Y7ow2j9jRgbTusBHc57VUh55G4wfbVskhjkbh");
 const REMOTE_SEED: &[u8] = b"Remote";
 
 #[program]
-pub mod my_project {
+pub mod oapp_example {
     use super::*;
 
     pub fn initialize(mut ctx: Context<RegisterOApp>, params: RegisterOAppParams) -> Result<()> {

@@ -20,10 +20,10 @@ import { readFileSync } from "fs";
     });
     setProvider(provider);
     // Load the IDL
-    const idl = JSON.parse(readFileSync("./target/idl/oapp.json", "utf8"));
+    const idl = JSON.parse(readFileSync("./target/idl/oapp-example.json", "utf8"));
 
     // IDL Address
-    const programPath = "portfolio-oapp.json"; // Update this path
+    const programPath = "portfolio-oapp-example.json"; // Update this path
     const programKeypair = web3.Keypair.fromSecretKey(
       Uint8Array.from(JSON.parse(readFileSync(programPath, "utf-8")))
     );

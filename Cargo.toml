@@ -1,6 +1,6 @@
 [workspace]
 members = [
-    "programs/oapp"
+    "programs/oapp-example"
 ]
 resolver = "2"
 
