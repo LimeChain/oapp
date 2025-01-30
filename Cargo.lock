@@ -989,17 +989,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "my-project"
-version = "0.1.0"
-dependencies = [
- "anchor-lang",
- "cpi-helper",
- "endpoint",
- "oapp",
- "solana-program",
-]
-
-[[package]]
 name = "num-bigint"
 version = "0.4.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1036,6 +1025,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "071dfc062690e90b734c0b2273ce72ad0ffa95f0c74596bc250dcfd960262841"
 dependencies = [
  "autocfg",
+]
+
+[[package]]
+name = "oapp"
+version = "0.1.0"
+dependencies = [
+ "anchor-lang",
+ "cpi-helper",
+ "endpoint",
+ "oapp 0.1.0 (git+https://github.com/LayerZero-Labs/LayerZero-v2.git?branch=main)",
+ "solana-program",
 ]
 
 [[package]]

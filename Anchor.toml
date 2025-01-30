@@ -7,10 +7,10 @@ seeds = false
 skip-lint = false
 
 [programs.localnet]
-my_project = "GG9GMa3Y7ow2j9jRgbTusBHc57VUh55G4wfbVskhjkbh"
+oapp = "GG9GMa3Y7ow2j9jRgbTusBHc57VUh55G4wfbVskhjkbh"
 
 [programs.devnet]
-my_project = "GG9GMa3Y7ow2j9jRgbTusBHc57VUh55G4wfbVskhjkbh"
+oapp = "GG9GMa3Y7ow2j9jRgbTusBHc57VUh55G4wfbVskhjkbh"
 
 [registry]
 url = "https://api.apr.dev"

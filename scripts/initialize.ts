@@ -20,7 +20,7 @@ import { readFileSync } from "fs";
     });
     setProvider(provider);
     // Load the IDL
-    const idl = JSON.parse(readFileSync("./target/idl/my_project.json", "utf8"));
+    const idl = JSON.parse(readFileSync("./target/idl/oapp.json", "utf8"));
 
     // IDL Address
     const programPath = "portfolio-oapp.json"; // Update this path

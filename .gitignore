@@ -9,6 +9,7 @@ test-ledger
 .idea
 .vscode
 *.json
+.crates
 
 !package.json
 !package-lock.json
