@@ -6,10 +6,11 @@
  */
 
 import * as beet from '@metaplex-foundation/beet'
+import { XFER, xFERBeet } from './XFER'
 export type SendParams = {
   dstEid: number
   receiver: number[] /* size: 32 */
-  message: Uint8Array
+  message: XFER
   options: Uint8Array
   nativeFee: beet.bignum
   lzTokenFee: beet.bignum
@@ -23,7 +24,7 @@ export const sendParamsBeet = new beet.FixableBeetArgsStruct<SendParams>(
   [
     ['dstEid', beet.u32],
     ['receiver', beet.uniformFixedSizeArray(beet.u8, 32)],
-    ['message', beet.bytes],
+    ['message', xFERBeet],
     ['options', beet.bytes],
     ['nativeFee', beet.u64],
     ['lzTokenFee', beet.u64],

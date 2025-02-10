@@ -63,7 +63,7 @@ export const sendInstructionDiscriminator = [102, 251, 20, 187, 65, 75, 12, 69]
 export function createSendInstruction(
   accounts: SendInstructionAccounts,
   args: SendInstructionArgs,
-  programId = new web3.PublicKey('GG9GMa3Y7ow2j9jRgbTusBHc57VUh55G4wfbVskhjkbh')
+  programId = new web3.PublicKey('9Fmenbf7Qti4sG3hQWwifpAvGArtqtK9N96jdN19MX3u')
 ) {
   const [data] = sendStruct.serialize({
     instructionDiscriminator: sendInstructionDiscriminator,

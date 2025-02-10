@@ -26,30 +26,28 @@ pub struct RegisterOApp<'info> {
     pub system_program: AccountInfo<'info>,
 }
 
-impl RegisterOApp<'_> {
-    pub fn apply(ctx: &mut Context<RegisterOApp>, params: RegisterOAppParams) -> Result<()> {
-        let global_config = &mut ctx.accounts.global_config;
-        global_config.portfolio = params.portfolio;
-        global_config.mainnet_rfq = params.mainnet_rfq;
-        global_config.default_chain_id = 1;
-        global_config.out_nonce = 0;
+pub fn register_oapp(ctx: Context<RegisterOApp>, params: RegisterOAppParams) -> Result<()> {
+    let global_config = &mut ctx.accounts.global_config;
+    global_config.portfolio = params.portfolio;
+    global_config.mainnet_rfq = params.mainnet_rfq;
+    global_config.default_chain_id = 1;
+    global_config.out_nonce = 0;
 
-        let sol_vault = &mut ctx.accounts.sol_vault;
+    let sol_vault = &mut ctx.accounts.sol_vault;
 
-        msg!("Global config initialized");
-        msg!("Registering OAPP");
-        oapp::endpoint_cpi::register_oapp(
-            ENDPOINT_ID,
-            sol_vault.key(),
-            ctx.remaining_accounts,
-            &[b"SolVault".as_ref(), &[ctx.bumps.sol_vault]],
-            endpoint::instructions::RegisterOAppParams {
-                delegate: ctx.accounts.authority.key(),
-            },
-        )?;
+    msg!("Global config initialized");
+    msg!("Registering Portfolio Bridge");
+    oapp::endpoint_cpi::register_oapp(
+        ENDPOINT_ID,
+        sol_vault.key(),
+        ctx.remaining_accounts,
+        &[b"SolVault".as_ref(), &[ctx.bumps.sol_vault]],
+        endpoint::instructions::RegisterOAppParams {
+            delegate: ctx.accounts.authority.key(),
+        },
+    )?;
 
-        Ok(())
-    }
+    Ok(())
 }
 
 #[derive(Debug, Clone, AnchorSerialize, AnchorDeserialize)]

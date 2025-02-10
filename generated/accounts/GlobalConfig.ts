@@ -89,7 +89,7 @@ export class GlobalConfig implements GlobalConfigArgs {
    */
   static gpaBuilder(
     programId: web3.PublicKey = new web3.PublicKey(
-      'GG9GMa3Y7ow2j9jRgbTusBHc57VUh55G4wfbVskhjkbh'
+      '9Fmenbf7Qti4sG3hQWwifpAvGArtqtK9N96jdN19MX3u'
     )
   ) {
     return beetSolana.GpaBuilder.fromStruct(programId, globalConfigBeet)
