@@ -22,7 +22,7 @@ export type QuoteInstructionArgs = {
  * @category Quote
  * @category generated
  */
-export const quoteStruct = new beet.FixableBeetArgsStruct<
+export const quoteStruct = new beet.BeetArgsStruct<
   QuoteInstructionArgs & {
     instructionDiscriminator: number[] /* size: 8 */
   }
@@ -36,14 +36,14 @@ export const quoteStruct = new beet.FixableBeetArgsStruct<
 /**
  * Accounts required by the _quote_ instruction
  *
- * @property [**signer**] sender
+ * @property [] bridge
  * @property [] endpoint
  * @category Instructions
  * @category Quote
  * @category generated
  */
 export type QuoteInstructionAccounts = {
-  sender: web3.PublicKey
+  bridge: web3.PublicKey
   endpoint: web3.PublicKey
   anchorRemainingAccounts?: web3.AccountMeta[]
 }
@@ -65,7 +65,7 @@ export const quoteInstructionDiscriminator = [
 export function createQuoteInstruction(
   accounts: QuoteInstructionAccounts,
   args: QuoteInstructionArgs,
-  programId = new web3.PublicKey('9Fmenbf7Qti4sG3hQWwifpAvGArtqtK9N96jdN19MX3u')
+  programId = new web3.PublicKey('JAP9nCPz8FSQE5ZQY16yhxq1BMbseJnbMViAAtQWAsSN')
 ) {
   const [data] = quoteStruct.serialize({
     instructionDiscriminator: quoteInstructionDiscriminator,
@@ -73,9 +73,9 @@ export function createQuoteInstruction(
   })
   const keys: web3.AccountMeta[] = [
     {
-      pubkey: accounts.sender,
+      pubkey: accounts.bridge,
       isWritable: false,
-      isSigner: true,
+      isSigner: false,
     },
     {
       pubkey: accounts.endpoint,

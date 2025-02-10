@@ -1,4 +1,11 @@
-use crate::*;
+use crate::{
+    consts::{BRIDGE_SEED, GAS_OPTIONS},
+    state::Bridge,
+    xfer::XFER,
+    *,
+};
+
+use hex::decode;
 use oapp::endpoint::{
     instructions::QuoteParams as EndpointQuoteParams, state::EndpointSettings, ENDPOINT_SEED,
     ID as ENDPOINT_ID,
@@ -7,38 +14,33 @@ use oapp::endpoint::{
 #[derive(Accounts)]
 #[instruction(params: QuoteParams)]
 pub struct Quote<'info> {
-    pub sender: Signer<'info>,
+    #[account(seeds = [BRIDGE_SEED], bump = bridge.bump)]
+    pub bridge: Account<'info, Bridge>,
     #[account(seeds = [ENDPOINT_SEED], bump = endpoint.bump, seeds::program = ENDPOINT_ID)]
     pub endpoint: Account<'info, EndpointSettings>,
 }
 
-pub fn quote(ctx: Context<Quote>, params: QuoteParams) -> Result<MessagingFee> {
-    let message = encode(params.msg_type, ctx.accounts.endpoint.eid);
+pub fn quote(ctx: &Context<Quote>, params: &QuoteParams) -> Result<MessagingFee> {
+    let message = params.message.pack_xfer_message()?;
+
+    let options = decode(GAS_OPTIONS).unwrap();
 
     // calling endpoint cpi
     let quote_params = EndpointQuoteParams {
-        sender: ctx.accounts.sender.key(),
+        sender: ctx.accounts.bridge.key(),
         dst_eid: params.dst_eid,
         receiver: params.receiver,
         message,
-        pay_in_lz_token: params.pay_in_lz_token,
-        options: params.options.clone(),
+        pay_in_lz_token: false,
+        options,
     };
-    Ok(oapp::endpoint_cpi::quote(ENDPOINT_ID, ctx.remaining_accounts, quote_params)?)
+
+    oapp::endpoint_cpi::quote(ENDPOINT_ID, ctx.remaining_accounts, quote_params)
 }
 
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]
 pub struct QuoteParams {
     pub dst_eid: u32,
     pub receiver: [u8; 32],
-    pub msg_type: u8,
-    pub options: Vec<u8>,
-    pub pay_in_lz_token: bool,
-}
-
-fn encode(msg_type: u8, src_eid: u32) -> Vec<u8> {
-    let mut encoded = Vec::new();
-    encoded.push(msg_type);
-    encoded.extend_from_slice(&src_eid.to_be_bytes());
-    encoded
+    pub message: XFER,
 }

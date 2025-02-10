@@ -38,6 +38,7 @@ export const setRemoteStruct = new beet.BeetArgsStruct<
  *
  * @property [_writable_, **signer**] admin
  * @property [_writable_] remote
+ * @property [] bridge
  * @category Instructions
  * @category SetRemote
  * @category generated
@@ -45,6 +46,7 @@ export const setRemoteStruct = new beet.BeetArgsStruct<
 export type SetRemoteInstructionAccounts = {
   admin: web3.PublicKey
   remote: web3.PublicKey
+  bridge: web3.PublicKey
   systemProgram?: web3.PublicKey
   anchorRemainingAccounts?: web3.AccountMeta[]
 }
@@ -66,7 +68,7 @@ export const setRemoteInstructionDiscriminator = [
 export function createSetRemoteInstruction(
   accounts: SetRemoteInstructionAccounts,
   args: SetRemoteInstructionArgs,
-  programId = new web3.PublicKey('9Fmenbf7Qti4sG3hQWwifpAvGArtqtK9N96jdN19MX3u')
+  programId = new web3.PublicKey('JAP9nCPz8FSQE5ZQY16yhxq1BMbseJnbMViAAtQWAsSN')
 ) {
   const [data] = setRemoteStruct.serialize({
     instructionDiscriminator: setRemoteInstructionDiscriminator,
@@ -81,6 +83,11 @@ export function createSetRemoteInstruction(
     {
       pubkey: accounts.remote,
       isWritable: true,
+      isSigner: false,
+    },
+    {
+      pubkey: accounts.bridge,
+      isWritable: false,
       isSigner: false,
     },
     {

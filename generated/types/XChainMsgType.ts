@@ -6,20 +6,18 @@
  */
 
 import * as beet from '@metaplex-foundation/beet'
-import { XFER, xFERBeet } from './XFER'
-export type SendParams = {
-  dstEid: number
-  message: XFER
+/**
+ * @category enums
+ * @category generated
+ */
+export enum XChainMsgType {
+  XFER,
 }
 
 /**
  * @category userTypes
  * @category generated
  */
-export const sendParamsBeet = new beet.BeetArgsStruct<SendParams>(
-  [
-    ['dstEid', beet.u32],
-    ['message', xFERBeet],
-  ],
-  'SendParams'
-)
+export const xChainMsgTypeBeet = beet.fixedScalarEnum(
+  XChainMsgType
+) as beet.FixedSizeBeet<XChainMsgType, XChainMsgType>

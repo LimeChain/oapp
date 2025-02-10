@@ -8,73 +8,73 @@
 import * as beet from '@metaplex-foundation/beet'
 import * as web3 from '@solana/web3.js'
 import {
-  RegisterOAppParams,
-  registerOAppParamsBeet,
-} from '../types/RegisterOAppParams'
+  InitBridgeParams,
+  initBridgeParamsBeet,
+} from '../types/InitBridgeParams'
 
 /**
  * @category Instructions
- * @category Initialize
+ * @category InitBridge
  * @category generated
  */
-export type InitializeInstructionArgs = {
-  params: RegisterOAppParams
+export type InitBridgeInstructionArgs = {
+  params: InitBridgeParams
 }
 /**
  * @category Instructions
- * @category Initialize
+ * @category InitBridge
  * @category generated
  */
-export const initializeStruct = new beet.BeetArgsStruct<
-  InitializeInstructionArgs & {
+export const initBridgeStruct = new beet.BeetArgsStruct<
+  InitBridgeInstructionArgs & {
     instructionDiscriminator: number[] /* size: 8 */
   }
 >(
   [
     ['instructionDiscriminator', beet.uniformFixedSizeArray(beet.u8, 8)],
-    ['params', registerOAppParamsBeet],
+    ['params', initBridgeParamsBeet],
   ],
-  'InitializeInstructionArgs'
+  'InitBridgeInstructionArgs'
 )
 /**
- * Accounts required by the _initialize_ instruction
+ * Accounts required by the _initBridge_ instruction
  *
  * @property [_writable_, **signer**] authority
- * @property [_writable_] globalConfig
+ * @property [_writable_] bridge
  * @property [_writable_] solVault
  * @category Instructions
- * @category Initialize
+ * @category InitBridge
  * @category generated
  */
-export type InitializeInstructionAccounts = {
+export type InitBridgeInstructionAccounts = {
   authority: web3.PublicKey
-  globalConfig: web3.PublicKey
+  bridge: web3.PublicKey
   solVault: web3.PublicKey
   systemProgram?: web3.PublicKey
   anchorRemainingAccounts?: web3.AccountMeta[]
 }
 
-export const initializeInstructionDiscriminator = [
-  175, 175, 109, 31, 13, 152, 155, 237,
+export const initBridgeInstructionDiscriminator = [
+  94, 43, 213, 33, 108, 54, 253, 169,
 ]
 
 /**
- * Creates a _Initialize_ instruction.
+ * Creates a _InitBridge_ instruction.
  *
  * @param accounts that will be accessed while the instruction is processed
  * @param args to provide as instruction data to the program
  *
  * @category Instructions
- * @category Initialize
+ * @category InitBridge
  * @category generated
  */
-export function createInitializeInstruction(
-  accounts: InitializeInstructionAccounts,
-  args: InitializeInstructionArgs,
-  programId = new web3.PublicKey('9Fmenbf7Qti4sG3hQWwifpAvGArtqtK9N96jdN19MX3u')
+export function createInitBridgeInstruction(
+  accounts: InitBridgeInstructionAccounts,
+  args: InitBridgeInstructionArgs,
+  programId = new web3.PublicKey('JAP9nCPz8FSQE5ZQY16yhxq1BMbseJnbMViAAtQWAsSN')
 ) {
-  const [data] = initializeStruct.serialize({
-    instructionDiscriminator: initializeInstructionDiscriminator,
+  const [data] = initBridgeStruct.serialize({
+    instructionDiscriminator: initBridgeInstructionDiscriminator,
     ...args,
   })
   const keys: web3.AccountMeta[] = [
@@ -84,7 +84,7 @@ export function createInitializeInstruction(
       isSigner: true,
     },
     {
-      pubkey: accounts.globalConfig,
+      pubkey: accounts.bridge,
       isWritable: true,
       isSigner: false,
     },

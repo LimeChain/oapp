@@ -7,10 +7,10 @@ seeds = false
 skip-lint = false
 
 [programs.localnet]
-oapp_example = "GG9GMa3Y7ow2j9jRgbTusBHc57VUh55G4wfbVskhjkbh"
+portfolio_bridge = "JAP9nCPz8FSQE5ZQY16yhxq1BMbseJnbMViAAtQWAsSN"
 
 [programs.devnet]
-oapp_example = "GG9GMa3Y7ow2j9jRgbTusBHc57VUh55G4wfbVskhjkbh"
+portfolio_bridge = "JAP9nCPz8FSQE5ZQY16yhxq1BMbseJnbMViAAtQWAsSN"
 
 [registry]
 url = "https://api.apr.dev"

@@ -1,26 +1,25 @@
 use anchor_lang::prelude::*;
-use endpoint::{MessagingReceipt, MessagingFee};
 use anchor_lang::{declare_id, program};
+use oapp::endpoint::{MessagingFee, MessagingReceipt};
 
+mod consts;
 mod instructions;
 mod state;
 mod xfer;
-
 use instructions::*;
 
-
-declare_id!("9Fmenbf7Qti4sG3hQWwifpAvGArtqtK9N96jdN19MX3u");
+declare_id!("JAP9nCPz8FSQE5ZQY16yhxq1BMbseJnbMViAAtQWAsSN");
 
 #[program]
 pub mod portfolio_bridge {
     use super::*;
 
-    pub fn initialize(ctx: Context<RegisterOApp>, params: RegisterOAppParams) -> Result<()> {
-        register_oapp(ctx, params)
+    pub fn init_bridge(ctx: Context<InitBridge>, params: InitBridgeParams) -> Result<()> {
+        instructions::init_bridge(ctx, params)
     }
 
-    pub fn set_remote(ctx: Context<SetRemote>, params: SetRemoteParams) -> Result<()> {
-        instructions::set_remote(ctx, params)
+    pub fn set_remote(mut ctx: Context<SetRemote>, params: SetRemoteParams) -> Result<()> {
+        instructions::set_remote(&mut ctx, &params)
     }
 
     pub fn send(ctx: Context<Send>, params: SendParams) -> Result<MessagingReceipt> {
@@ -28,7 +27,7 @@ pub mod portfolio_bridge {
         Ok(receipt)
     }
 
-    pub fn quote(ctx: Context<Quote>, params: QuoteParams) -> Result<MessagingFee> {
-        Ok(instructions::quote(ctx, params)?)
+    pub fn quote(mut ctx: Context<Quote>, params: QuoteParams) -> Result<MessagingFee> {
+        instructions::quote(&mut ctx, &params)
     }
 }
