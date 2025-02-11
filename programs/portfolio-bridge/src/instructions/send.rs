@@ -17,7 +17,6 @@ pub struct Send<'info> {
     #[account(
         seeds = [
             REMOTE_SEED,
-            &bridge.key().to_bytes(),
             &params.dst_eid.to_be_bytes()
         ],
         bump = remote.bump
@@ -25,15 +24,15 @@ pub struct Send<'info> {
     pub remote: Account<'info, Remote>,
     #[account(seeds = [BRIDGE_SEED], bump = bridge.bump)]
     pub bridge: Account<'info, Bridge>,
-    #[account(seeds = [ENDPOINT_SEED], bump = endpoint_program.bump, seeds::program = ENDPOINT_ID)]
-    pub endpoint_program: Account<'info, EndpointSettings>,
+    #[account(seeds = [ENDPOINT_SEED], bump = endpoint.bump, seeds::program = ENDPOINT_ID)]
+    pub endpoint: Account<'info, EndpointSettings>,
 }
 
-pub fn send_message(ctx: Context<Send>, params: SendParams) -> Result<MessagingReceipt> {
+pub fn send(ctx: Context<Send>, params: SendParams) -> Result<MessagingReceipt> {
     let options = decode(GAS_OPTIONS).unwrap(); //we provide const value
 
     //TODO: Calculate quote
-
+    
     let message = params.message.pack_xfer_message()?;
     let send_params = EndpointSendParams {
         dst_eid: params.dst_eid,

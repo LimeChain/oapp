@@ -38,7 +38,7 @@ export const sendStruct = new beet.BeetArgsStruct<
  *
  * @property [] remote
  * @property [] bridge
- * @property [] endpointProgram
+ * @property [] endpoint
  * @category Instructions
  * @category Send
  * @category generated
@@ -46,7 +46,7 @@ export const sendStruct = new beet.BeetArgsStruct<
 export type SendInstructionAccounts = {
   remote: web3.PublicKey
   bridge: web3.PublicKey
-  endpointProgram: web3.PublicKey
+  endpoint: web3.PublicKey
   anchorRemainingAccounts?: web3.AccountMeta[]
 }
 
@@ -65,7 +65,7 @@ export const sendInstructionDiscriminator = [102, 251, 20, 187, 65, 75, 12, 69]
 export function createSendInstruction(
   accounts: SendInstructionAccounts,
   args: SendInstructionArgs,
-  programId = new web3.PublicKey('JAP9nCPz8FSQE5ZQY16yhxq1BMbseJnbMViAAtQWAsSN')
+  programId = new web3.PublicKey('DD12vMyLdwszDCAzLhsUPwBmzJXv611dUCPhqwpZQYG4')
 ) {
   const [data] = sendStruct.serialize({
     instructionDiscriminator: sendInstructionDiscriminator,
@@ -83,7 +83,7 @@ export function createSendInstruction(
       isSigner: false,
     },
     {
-      pubkey: accounts.endpointProgram,
+      pubkey: accounts.endpoint,
       isWritable: false,
       isSigner: false,
     },

@@ -8,8 +8,11 @@ import { accounts } from "../generated/bridge";
 (async () => {
   await callSend(connection, signer.publicKey, 40267);
   //generateOptions();
-  //await getId(connection);
+  // await getId(connection);
   // await getPeer(connection, 40267);
+  //const [remote] = bridgeProgram.deriver.remote(40267);
+  //console.log(remote.toBase58());
+  // await callQuote(connection, signer.publicKey, 40267);
 })();
 
 async function callSend(
@@ -62,7 +65,16 @@ async function getId(connection: Connection) {
 
 function generateOptions() {
   const options = Options.newOptions()
-    .addExecutorLzReceiveOption(300000, 0)
+    .addExecutorLzReceiveOption(400000, 0)
     .toHex();
   console.log(options);
+}
+
+async function callQuote(
+  connection: Connection,
+  payer: PublicKey,
+  dstEid: number
+) {
+  const ix = await bridgeProgram.newQuote(connection, payer, dstEid);
+  await sendAndConfirm(connection, [signer], [ix]);
 }

@@ -20,7 +20,7 @@ import { signer } from "./common";
 import { remotePeers } from "./common";
 
 (async () => {
-  await initBridge(connection, signer, signer);
+  await initBridge(connection, signer);
   for (const [remoteStr, remotePeer] of Object.entries(remotePeers)) {
     const remotePeerBytes = arrayify(hexZeroPad(remotePeer, 32));
     const remote = parseInt(remoteStr) as EndpointId;
@@ -42,8 +42,7 @@ import { remotePeers } from "./common";
 
 async function initBridge(
   connection: Connection,
-  payer: Keypair,
-  admin: Keypair
+  payer: Keypair
 ): Promise<void> {
   const [bridge] = bridgeProgram.idPDA();
   let current = false;
@@ -59,14 +58,14 @@ async function initBridge(
   const ix = await bridgeProgram.initBridge(
     connection,
     payer.publicKey,
-    admin.publicKey, // admin/delegate double check it, is the same public key
+    // admin/delegate double check it, is the same public key
     endpointProgram
   );
   if (ix == null) {
     // already initialized
     return Promise.resolve();
   }
-  sendAndConfirm(connection, [admin], [ix]);
+  sendAndConfirm(connection, [payer], [ix]);
 }
 
 async function initOappNonce(

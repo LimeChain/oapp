@@ -61,7 +61,6 @@ export class Bridge {
   async initBridge(
     connection: Connection,
     payer: PublicKey,
-    admin: PublicKey,
     endpoint: EndpointProgram.Endpoint,
     commitmentOrConfig: Commitment | GetAccountInfoConfig = "confirmed"
   ) {
@@ -110,10 +109,10 @@ export class Bridge {
       {
         params: {
           portfolio: new PublicKey(
-            "JAP9nCPz8FSQE5ZQY16yhxq1BMbseJnbMViAAtQWAsSN"
+            "DD12vMyLdwszDCAzLhsUPwBmzJXv611dUCPhqwpZQYG4"
           ),
           mainnetRfq: new PublicKey(
-            "JAP9nCPz8FSQE5ZQY16yhxq1BMbseJnbMViAAtQWAsSN"
+            "DD12vMyLdwszDCAzLhsUPwBmzJXv611dUCPhqwpZQYG4"
           ),
           defaultChainId: 12,
           endpointProgram: endpoint.program,
@@ -254,11 +253,12 @@ export class Bridge {
       sender: hexlify(bridgePDA.toBytes()),
       receiver: hexlify(receiverInfo.address),
     };
+
     const ix = instructions.createSendInstruction(
       {
         remote: remotePDA,
         bridge: bridgePDA,
-        endpointProgram: endpointSettingPDA,
+        endpoint: endpointSettingPDA,
         // Get remaining accounts from msgLib(simple_msgLib or uln)
         anchorRemainingAccounts:
           remainingAccounts ??

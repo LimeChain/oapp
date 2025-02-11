@@ -13,7 +13,7 @@ pub struct SetRemote<'info> {
         init,
         payer = admin,
         space = Remote::SIZE,
-        seeds = [REMOTE_SEED, &bridge.key().to_bytes(), &params.dst_eid.to_be_bytes()],
+        seeds = [REMOTE_SEED, &params.dst_eid.to_be_bytes()],
         bump
     )]
     pub remote: Account<'info, Remote>,

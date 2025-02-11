@@ -25,7 +25,7 @@ pub struct Bridge {
     pub bump: u8,
 }
 
-impl GlobalConfig {
+impl Bridge {
     pub const LEN: usize = 8 + Bridge::INIT_SPACE; // descriminator + sum of each field's len
 }
 

@@ -1,5 +1,5 @@
-use crate::state::{Bridge, GlobalConfig};
 use crate::consts::{BRIDGE_SEED, SOL_VAULT_SEED};
+use crate::state::{Bridge, GlobalConfig};
 use anchor_lang::prelude::*;
 use anchor_lang::{Accounts, AnchorDeserialize, AnchorSerialize, Key};
 use oapp::endpoint::{instructions::RegisterOAppParams, ID as ENDPOINT_ID};
@@ -14,7 +14,7 @@ pub struct InitBridge<'info> {
     #[account(
         init,
         payer = authority,
-        space = GlobalConfig::LEN,
+        space = Bridge::LEN,
         seeds = [BRIDGE_SEED],
         bump
     )]
@@ -28,6 +28,7 @@ pub struct InitBridge<'info> {
 pub fn init_bridge(ctx: Context<InitBridge>, params: InitBridgeParams) -> Result<()> {
     let bridge = &mut ctx.accounts.bridge;
 
+    msg!("Bridge: {}", bridge.key());
     // init bridge
     bridge.endpoint_program = params.endpoint_program.key();
     bridge.admin = ctx.accounts.authority.key();
