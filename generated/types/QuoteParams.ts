@@ -6,25 +6,22 @@
  */
 
 import * as beet from '@metaplex-foundation/beet'
+import { XFER, xFERBeet } from './XFER'
 export type QuoteParams = {
   dstEid: number
   receiver: number[] /* size: 32 */
-  msgType: number
-  options: Uint8Array
-  payInLzToken: boolean
+  message: XFER
 }
 
 /**
  * @category userTypes
  * @category generated
  */
-export const quoteParamsBeet = new beet.FixableBeetArgsStruct<QuoteParams>(
+export const quoteParamsBeet = new beet.BeetArgsStruct<QuoteParams>(
   [
     ['dstEid', beet.u32],
     ['receiver', beet.uniformFixedSizeArray(beet.u8, 32)],
-    ['msgType', beet.u8],
-    ['options', beet.bytes],
-    ['payInLzToken', beet.bool],
+    ['message', xFERBeet],
   ],
   'QuoteParams'
 )

@@ -7,14 +7,35 @@ use anchor_lang::prelude::*;
 // ];
 
 // ACCOUNTS
-#[account]
+
+#[derive(Clone, InitSpace, AnchorDeserialize, AnchorSerialize)]
 pub struct GlobalConfig {
     pub portfolio: Pubkey,
     pub mainnet_rfq: Pubkey,
     pub default_chain_id: u32, // Dexalot L1
-    pub out_nonce: u64,        // Outgoing messages nonce
+}
+
+#[account]
+#[derive(InitSpace)]
+pub struct Bridge {
+    pub admin: Pubkey,
+    pub global_config: GlobalConfig,
+    pub endpoint_program: Pubkey,
+    pub sol_vault: Pubkey,
+    pub bump: u8,
 }
 
 impl GlobalConfig {
-    pub const LEN: usize = 8 + 32 + 32 + 4 + 8; // descriminator + sum of each field's len
+    pub const LEN: usize = 8 + Bridge::INIT_SPACE; // descriminator + sum of each field's len
+}
+
+#[account]
+#[derive(InitSpace)]
+pub struct Remote {
+    pub address: [u8; 32],
+    pub bump: u8,
+}
+
+impl Remote {
+    pub const SIZE: usize = 8 + Self::INIT_SPACE;
 }

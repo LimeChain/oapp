@@ -8,20 +8,23 @@
 import * as web3 from '@solana/web3.js'
 import * as beetSolana from '@metaplex-foundation/beet-solana'
 import * as beet from '@metaplex-foundation/beet'
-export type RegisterOAppParams = {
+export type InitBridgeParams = {
   portfolio: web3.PublicKey
   mainnetRfq: web3.PublicKey
+  defaultChainId: number
+  endpointProgram: web3.PublicKey
 }
 
 /**
  * @category userTypes
  * @category generated
  */
-export const registerOAppParamsBeet =
-  new beet.BeetArgsStruct<RegisterOAppParams>(
-    [
-      ['portfolio', beetSolana.publicKey],
-      ['mainnetRfq', beetSolana.publicKey],
-    ],
-    'RegisterOAppParams'
-  )
+export const initBridgeParamsBeet = new beet.BeetArgsStruct<InitBridgeParams>(
+  [
+    ['portfolio', beetSolana.publicKey],
+    ['mainnetRfq', beetSolana.publicKey],
+    ['defaultChainId', beet.u32],
+    ['endpointProgram', beetSolana.publicKey],
+  ],
+  'InitBridgeParams'
+)

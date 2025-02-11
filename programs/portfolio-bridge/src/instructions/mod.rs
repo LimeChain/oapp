@@ -1,9 +1,9 @@
-mod register_oapp;
+mod init_bridge;
 mod send;
 mod quote;
 mod set_remote;
 
 pub use send::*;
-pub use register_oapp::*;
+pub use init_bridge::*;
 pub use quote::*;
 pub use set_remote::*;

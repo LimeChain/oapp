@@ -80,7 +80,7 @@ export class Remote implements RemoteArgs {
    */
   static gpaBuilder(
     programId: web3.PublicKey = new web3.PublicKey(
-      '9Fmenbf7Qti4sG3hQWwifpAvGArtqtK9N96jdN19MX3u'
+      'JAP9nCPz8FSQE5ZQY16yhxq1BMbseJnbMViAAtQWAsSN'
     )
   ) {
     return beetSolana.GpaBuilder.fromStruct(programId, remoteBeet)

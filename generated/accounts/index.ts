@@ -1,9 +1,9 @@
+export * from './Bridge'
 export * from './EndpointSettings'
-export * from './GlobalConfig'
 export * from './Remote'
 
 import { EndpointSettings } from './EndpointSettings'
+import { Bridge } from './Bridge'
 import { Remote } from './Remote'
-import { GlobalConfig } from './GlobalConfig'
 
-export const accountProviders = { EndpointSettings, Remote, GlobalConfig }
+export const accountProviders = { EndpointSettings, Bridge, Remote }

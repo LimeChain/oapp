@@ -6,17 +6,17 @@
  */
 
 import * as beet from '@metaplex-foundation/beet'
-import * as web3 from '@solana/web3.js'
-import * as beetSolana from '@metaplex-foundation/beet-solana'
 import { Tx, txBeet } from './Tx'
+import { XChainMsgType, xChainMsgTypeBeet } from './XChainMsgType'
 export type XFER = {
   nonce: beet.bignum
   transaction: Tx
-  trader: web3.PublicKey
+  trader: number[] /* size: 20 */
   symbol: number[] /* size: 32 */
-  quantity: beet.bignum
-  timestamp: beet.bignum
+  quantity: beet.bignum[] /* size: 4 */
+  timestamp: number
   customdata: number[] /* size: 28 */
+  messageType: XChainMsgType
 }
 
 /**
@@ -27,11 +27,12 @@ export const xFERBeet = new beet.BeetArgsStruct<XFER>(
   [
     ['nonce', beet.u64],
     ['transaction', txBeet],
-    ['trader', beetSolana.publicKey],
+    ['trader', beet.uniformFixedSizeArray(beet.u8, 20)],
     ['symbol', beet.uniformFixedSizeArray(beet.u8, 32)],
-    ['quantity', beet.u64],
-    ['timestamp', beet.i64],
+    ['quantity', beet.uniformFixedSizeArray(beet.u64, 4)],
+    ['timestamp', beet.u32],
     ['customdata', beet.uniformFixedSizeArray(beet.u8, 28)],
+    ['messageType', xChainMsgTypeBeet],
   ],
   'XFER'
 )

@@ -6,63 +6,67 @@
  */
 
 import * as web3 from '@solana/web3.js'
-import * as beet from '@metaplex-foundation/beet'
 import * as beetSolana from '@metaplex-foundation/beet-solana'
+import * as beet from '@metaplex-foundation/beet'
+import { GlobalConfig, globalConfigBeet } from '../types/GlobalConfig'
 
 /**
- * Arguments used to create {@link GlobalConfig}
+ * Arguments used to create {@link Bridge}
  * @category Accounts
  * @category generated
  */
-export type GlobalConfigArgs = {
-  portfolio: web3.PublicKey
-  mainnetRfq: web3.PublicKey
-  defaultChainId: number
-  outNonce: beet.bignum
+export type BridgeArgs = {
+  admin: web3.PublicKey
+  globalConfig: GlobalConfig
+  endpointProgram: web3.PublicKey
+  solVault: web3.PublicKey
+  bump: number
 }
 
-export const globalConfigDiscriminator = [149, 8, 156, 202, 160, 252, 176, 217]
+export const bridgeDiscriminator = [231, 232, 31, 98, 110, 3, 23, 59]
 /**
- * Holds the data for the {@link GlobalConfig} Account and provides de/serialization
+ * Holds the data for the {@link Bridge} Account and provides de/serialization
  * functionality for that data
  *
  * @category Accounts
  * @category generated
  */
-export class GlobalConfig implements GlobalConfigArgs {
+export class Bridge implements BridgeArgs {
   private constructor(
-    readonly portfolio: web3.PublicKey,
-    readonly mainnetRfq: web3.PublicKey,
-    readonly defaultChainId: number,
-    readonly outNonce: beet.bignum
+    readonly admin: web3.PublicKey,
+    readonly globalConfig: GlobalConfig,
+    readonly endpointProgram: web3.PublicKey,
+    readonly solVault: web3.PublicKey,
+    readonly bump: number
   ) {}
 
   /**
-   * Creates a {@link GlobalConfig} instance from the provided args.
+   * Creates a {@link Bridge} instance from the provided args.
    */
-  static fromArgs(args: GlobalConfigArgs) {
-    return new GlobalConfig(
-      args.portfolio,
-      args.mainnetRfq,
-      args.defaultChainId,
-      args.outNonce
+  static fromArgs(args: BridgeArgs) {
+    return new Bridge(
+      args.admin,
+      args.globalConfig,
+      args.endpointProgram,
+      args.solVault,
+      args.bump
     )
   }
 
   /**
-   * Deserializes the {@link GlobalConfig} from the data of the provided {@link web3.AccountInfo}.
+   * Deserializes the {@link Bridge} from the data of the provided {@link web3.AccountInfo}.
    * @returns a tuple of the account data and the offset up to which the buffer was read to obtain it.
    */
   static fromAccountInfo(
     accountInfo: web3.AccountInfo<Buffer>,
     offset = 0
-  ): [GlobalConfig, number] {
-    return GlobalConfig.deserialize(accountInfo.data, offset)
+  ): [Bridge, number] {
+    return Bridge.deserialize(accountInfo.data, offset)
   }
 
   /**
    * Retrieves the account info from the provided address and deserializes
-   * the {@link GlobalConfig} from its data.
+   * the {@link Bridge} from its data.
    *
    * @throws Error if no account info is found at the address or if deserialization fails
    */
@@ -70,15 +74,15 @@ export class GlobalConfig implements GlobalConfigArgs {
     connection: web3.Connection,
     address: web3.PublicKey,
     commitmentOrConfig?: web3.Commitment | web3.GetAccountInfoConfig
-  ): Promise<GlobalConfig> {
+  ): Promise<Bridge> {
     const accountInfo = await connection.getAccountInfo(
       address,
       commitmentOrConfig
     )
     if (accountInfo == null) {
-      throw new Error(`Unable to find GlobalConfig account at ${address}`)
+      throw new Error(`Unable to find Bridge account at ${address}`)
     }
-    return GlobalConfig.fromAccountInfo(accountInfo, 0)[0]
+    return Bridge.fromAccountInfo(accountInfo, 0)[0]
   }
 
   /**
@@ -89,42 +93,42 @@ export class GlobalConfig implements GlobalConfigArgs {
    */
   static gpaBuilder(
     programId: web3.PublicKey = new web3.PublicKey(
-      '9Fmenbf7Qti4sG3hQWwifpAvGArtqtK9N96jdN19MX3u'
+      'JAP9nCPz8FSQE5ZQY16yhxq1BMbseJnbMViAAtQWAsSN'
     )
   ) {
-    return beetSolana.GpaBuilder.fromStruct(programId, globalConfigBeet)
+    return beetSolana.GpaBuilder.fromStruct(programId, bridgeBeet)
   }
 
   /**
-   * Deserializes the {@link GlobalConfig} from the provided data Buffer.
+   * Deserializes the {@link Bridge} from the provided data Buffer.
    * @returns a tuple of the account data and the offset up to which the buffer was read to obtain it.
    */
-  static deserialize(buf: Buffer, offset = 0): [GlobalConfig, number] {
-    return globalConfigBeet.deserialize(buf, offset)
+  static deserialize(buf: Buffer, offset = 0): [Bridge, number] {
+    return bridgeBeet.deserialize(buf, offset)
   }
 
   /**
-   * Serializes the {@link GlobalConfig} into a Buffer.
+   * Serializes the {@link Bridge} into a Buffer.
    * @returns a tuple of the created Buffer and the offset up to which the buffer was written to store it.
    */
   serialize(): [Buffer, number] {
-    return globalConfigBeet.serialize({
-      accountDiscriminator: globalConfigDiscriminator,
+    return bridgeBeet.serialize({
+      accountDiscriminator: bridgeDiscriminator,
       ...this,
     })
   }
 
   /**
    * Returns the byteSize of a {@link Buffer} holding the serialized data of
-   * {@link GlobalConfig}
+   * {@link Bridge}
    */
   static get byteSize() {
-    return globalConfigBeet.byteSize
+    return bridgeBeet.byteSize
   }
 
   /**
    * Fetches the minimum balance needed to exempt an account holding
-   * {@link GlobalConfig} data from rent
+   * {@link Bridge} data from rent
    *
    * @param connection used to retrieve the rent exemption information
    */
@@ -133,39 +137,30 @@ export class GlobalConfig implements GlobalConfigArgs {
     commitment?: web3.Commitment
   ): Promise<number> {
     return connection.getMinimumBalanceForRentExemption(
-      GlobalConfig.byteSize,
+      Bridge.byteSize,
       commitment
     )
   }
 
   /**
    * Determines if the provided {@link Buffer} has the correct byte size to
-   * hold {@link GlobalConfig} data.
+   * hold {@link Bridge} data.
    */
   static hasCorrectByteSize(buf: Buffer, offset = 0) {
-    return buf.byteLength - offset === GlobalConfig.byteSize
+    return buf.byteLength - offset === Bridge.byteSize
   }
 
   /**
-   * Returns a readable version of {@link GlobalConfig} properties
+   * Returns a readable version of {@link Bridge} properties
    * and can be used to convert to JSON and/or logging
    */
   pretty() {
     return {
-      portfolio: this.portfolio.toBase58(),
-      mainnetRfq: this.mainnetRfq.toBase58(),
-      defaultChainId: this.defaultChainId,
-      outNonce: (() => {
-        const x = <{ toNumber: () => number }>this.outNonce
-        if (typeof x.toNumber === 'function') {
-          try {
-            return x.toNumber()
-          } catch (_) {
-            return x
-          }
-        }
-        return x
-      })(),
+      admin: this.admin.toBase58(),
+      globalConfig: this.globalConfig,
+      endpointProgram: this.endpointProgram.toBase58(),
+      solVault: this.solVault.toBase58(),
+      bump: this.bump,
     }
   }
 }
@@ -174,19 +169,20 @@ export class GlobalConfig implements GlobalConfigArgs {
  * @category Accounts
  * @category generated
  */
-export const globalConfigBeet = new beet.BeetStruct<
-  GlobalConfig,
-  GlobalConfigArgs & {
+export const bridgeBeet = new beet.BeetStruct<
+  Bridge,
+  BridgeArgs & {
     accountDiscriminator: number[] /* size: 8 */
   }
 >(
   [
     ['accountDiscriminator', beet.uniformFixedSizeArray(beet.u8, 8)],
-    ['portfolio', beetSolana.publicKey],
-    ['mainnetRfq', beetSolana.publicKey],
-    ['defaultChainId', beet.u32],
-    ['outNonce', beet.u64],
+    ['admin', beetSolana.publicKey],
+    ['globalConfig', globalConfigBeet],
+    ['endpointProgram', beetSolana.publicKey],
+    ['solVault', beetSolana.publicKey],
+    ['bump', beet.u8],
   ],
-  GlobalConfig.fromArgs,
-  'GlobalConfig'
+  Bridge.fromArgs,
+  'Bridge'
 )

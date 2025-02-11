@@ -586,7 +586,7 @@ checksum = "7c74b8349d32d297c9134b8c88677813a227df8f779daa29bfc29c183fe3dca6"
 [[package]]
 name = "cpi-helper"
 version = "0.1.0"
-source = "git+https://github.com/LayerZero-Labs/LayerZero-v2.git?branch=main#7da76840e41dc593d3c2007ce35b911b1d816b4b"
+source = "git+https://github.com/LayerZero-Labs/LayerZero-v2.git#f0f4a5efd6fe41ba872f31ac9d9823b3ed6ecf02"
 dependencies = [
  "bs58 0.5.1",
  "proc-macro2",
@@ -708,7 +708,7 @@ checksum = "60b1af1c220855b6ceac025d3f6ecdd2b7c4894bfe9cd9bda4fbb4bc7c0d4cf0"
 [[package]]
 name = "endpoint"
 version = "0.1.0"
-source = "git+https://github.com/LayerZero-Labs/LayerZero-v2.git?branch=main#7da76840e41dc593d3c2007ce35b911b1d816b4b"
+source = "git+https://github.com/LayerZero-Labs/LayerZero-v2.git#f0f4a5efd6fe41ba872f31ac9d9823b3ed6ecf02"
 dependencies = [
  "anchor-lang",
  "cpi-helper",
@@ -787,6 +787,12 @@ checksum = "6d621efb26863f0e9924c6ac577e8275e5e6b77455db64ffa6c65c904e9e132c"
 dependencies = [
  "unicode-segmentation",
 ]
+
+[[package]]
+name = "hex"
+version = "0.4.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7f24254aa9a54b5c858eaee2f5bccdb46aaf0e486a595ed5fd8f86ba55232a70"
 
 [[package]]
 name = "hmac"
@@ -983,7 +989,7 @@ dependencies = [
 [[package]]
 name = "messagelib-interface"
 version = "0.1.0"
-source = "git+https://github.com/LayerZero-Labs/LayerZero-v2.git?branch=main#7da76840e41dc593d3c2007ce35b911b1d816b4b"
+source = "git+https://github.com/LayerZero-Labs/LayerZero-v2.git#f0f4a5efd6fe41ba872f31ac9d9823b3ed6ecf02"
 dependencies = [
  "anchor-lang",
 ]
@@ -1030,21 +1036,10 @@ dependencies = [
 [[package]]
 name = "oapp"
 version = "0.1.0"
-source = "git+https://github.com/LayerZero-Labs/LayerZero-v2.git?branch=main#7da76840e41dc593d3c2007ce35b911b1d816b4b"
+source = "git+https://github.com/LayerZero-Labs/LayerZero-v2.git#f0f4a5efd6fe41ba872f31ac9d9823b3ed6ecf02"
 dependencies = [
  "anchor-lang",
  "endpoint",
-]
-
-[[package]]
-name = "oapp_example"
-version = "0.1.0"
-dependencies = [
- "anchor-lang",
- "cpi-helper",
- "endpoint",
- "oapp",
- "solana-program",
 ]
 
 [[package]]
@@ -1103,7 +1098,7 @@ version = "0.1.0"
 dependencies = [
  "anchor-lang",
  "anyhow",
- "endpoint",
+ "hex",
  "oapp",
  "solana-program",
 ]
@@ -1631,7 +1626,7 @@ checksum = "f6ccf251212114b54433ec949fd6a7841275f9ada20dddd2f29e9ceea4501493"
 [[package]]
 name = "utils"
 version = "0.1.0"
-source = "git+https://github.com/LayerZero-Labs/LayerZero-v2.git?branch=main#7da76840e41dc593d3c2007ce35b911b1d816b4b"
+source = "git+https://github.com/LayerZero-Labs/LayerZero-v2.git#f0f4a5efd6fe41ba872f31ac9d9823b3ed6ecf02"
 dependencies = [
  "anchor-lang",
 ]
