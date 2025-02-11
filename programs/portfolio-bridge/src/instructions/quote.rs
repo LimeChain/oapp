@@ -20,22 +20,23 @@ pub struct Quote<'info> {
     pub endpoint: Account<'info, EndpointSettings>,
 }
 
-pub fn quote(ctx: &Context<Quote>, params: &QuoteParams) -> Result<MessagingFee> {
-    let message = params.message.pack_xfer_message()?;
+pub fn quote(ctx: &Context<Quote>, params: &QuoteParams) -> Result<()> {
+    msg!("Endpoint: {}", ctx.accounts.endpoint.key());
+    // let message = params.message.pack_xfer_message()?;
 
-    let options = decode(GAS_OPTIONS).unwrap();
+    // let options = decode(GAS_OPTIONS).unwrap();
 
-    // calling endpoint cpi
-    let quote_params = EndpointQuoteParams {
-        sender: ctx.accounts.bridge.key(),
-        dst_eid: params.dst_eid,
-        receiver: params.receiver,
-        message,
-        pay_in_lz_token: false,
-        options,
-    };
-
-    oapp::endpoint_cpi::quote(ENDPOINT_ID, ctx.remaining_accounts, quote_params)
+    // // calling endpoint cpi
+    // let quote_params = EndpointQuoteParams {
+    //     sender: ctx.accounts.bridge.key(),
+    //     dst_eid: params.dst_eid,
+    //     receiver: params.receiver,
+    //     message,
+    //     pay_in_lz_token: false,
+    //     options,
+    // };
+    Ok(())
+    // oapp::endpoint_cpi::quote(ENDPOINT_ID, ctx.remaining_accounts, quote_params)
 }
 
 #[derive(Clone, AnchorSerialize, AnchorDeserialize)]

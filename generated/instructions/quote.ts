@@ -65,7 +65,7 @@ export const quoteInstructionDiscriminator = [
 export function createQuoteInstruction(
   accounts: QuoteInstructionAccounts,
   args: QuoteInstructionArgs,
-  programId = new web3.PublicKey('JAP9nCPz8FSQE5ZQY16yhxq1BMbseJnbMViAAtQWAsSN')
+  programId = new web3.PublicKey('DD12vMyLdwszDCAzLhsUPwBmzJXv611dUCPhqwpZQYG4')
 ) {
   const [data] = quoteStruct.serialize({
     instructionDiscriminator: quoteInstructionDiscriminator,

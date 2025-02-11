@@ -8,7 +8,7 @@ mod state;
 mod xfer;
 use instructions::*;
 
-declare_id!("JAP9nCPz8FSQE5ZQY16yhxq1BMbseJnbMViAAtQWAsSN");
+declare_id!("DD12vMyLdwszDCAzLhsUPwBmzJXv611dUCPhqwpZQYG4");
 
 #[program]
 pub mod portfolio_bridge {
@@ -23,11 +23,11 @@ pub mod portfolio_bridge {
     }
 
     pub fn send(ctx: Context<Send>, params: SendParams) -> Result<MessagingReceipt> {
-        let receipt = send_message(ctx, params)?;
+        let receipt = instructions::send(ctx, params)?;
         Ok(receipt)
     }
 
-    pub fn quote(mut ctx: Context<Quote>, params: QuoteParams) -> Result<MessagingFee> {
+    pub fn quote(mut ctx: Context<Quote>, params: QuoteParams) -> Result<()> {
         instructions::quote(&mut ctx, &params)
     }
 }

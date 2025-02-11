@@ -6,11 +6,11 @@ solana_version = "1.17.31"
 seeds = false
 skip-lint = false
 
-[programs.localnet]
-portfolio_bridge = "JAP9nCPz8FSQE5ZQY16yhxq1BMbseJnbMViAAtQWAsSN"
-
 [programs.devnet]
-portfolio_bridge = "JAP9nCPz8FSQE5ZQY16yhxq1BMbseJnbMViAAtQWAsSN"
+portfolio_bridge = "DD12vMyLdwszDCAzLhsUPwBmzJXv611dUCPhqwpZQYG4"
+
+[programs.localnet]
+portfolio_bridge = "DD12vMyLdwszDCAzLhsUPwBmzJXv611dUCPhqwpZQYG4"
 
 [registry]
 url = "https://api.apr.dev"

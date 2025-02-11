@@ -25,7 +25,6 @@ export class PDADeriver {
     return PublicKey.findProgramAddressSync(
       [
         Buffer.from(REMOTE_SEED),
-        this.bridge()[0].toBytes(),
         new BN(dstChainId).toArrayLike(Buffer, "be", 4),
       ],
       this.program
