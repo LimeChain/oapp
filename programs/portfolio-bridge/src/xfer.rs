@@ -1,27 +1,27 @@
 use anchor_lang::prelude::*;
 
-// Define the XFER struct
-#[derive(AnchorSerialize, AnchorDeserialize, Clone)]
+/// Rust equivalent of Dexalot's XFER Solidity struct
+/// The specific type mappings are left as comments next to the struct
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, Debug)]
 pub struct XFER {
-    pub nonce: u64,           // uint64 -> u64
-    pub transaction: Tx,      // IPortfolio.Tx -> Use an enum or struct for Tx
-    pub trader: [u8; 20],     // address -> Pubkey
-    pub symbol: [u8; 32],     // bytes32 -> Fixed-size [u8; 32] array
-    pub quantity: [u64; 4],   // uint256 -> u64
-    pub timestamp: u32,       // uint256 -> i64
-    pub customdata: [u8; 28], // bytes28 -> Fixed-size [u8; 28] array
-    pub message_type: XChainMsgType,
+    pub nonce: u64,                  // uint64 -> u64
+    pub transaction: Tx,             // IPortfolio.Tx -> Tx (u8 repr)
+    pub trader: Pubkey,              // address -> Pubkey
+    pub symbol: [u8; 32],            // bytes32 -> [u8; 32]
+    pub quantity: [u64; 4],          // uint256 -> [u64; 4]
+    pub timestamp: u32,              // uint256 -> u32
+    pub custom_data: [u8; 18],       // bytes18 -> [u8; 18]
+    pub message_type: XChainMsgType, // IPortfolio.XChainMsgType -> XChainMsgType (u8 repr)
 }
 
 impl XFER {
-    // Constructor for the XFER struct
     pub fn new(
         transaction: Tx,
-        trader: [u8; 20],
+        trader: Pubkey,
         symbol: [u8; 32],
         quantity: [u64; 4],
         timestamp: u32,
-        customdata: [u8; 28],
+        custom_data: [u8; 18],
     ) -> Self {
         XFER {
             nonce: 0,
@@ -30,38 +30,28 @@ impl XFER {
             symbol,
             quantity,
             timestamp,
-            customdata,
+            custom_data,
             message_type: XChainMsgType::XFER,
         }
     }
+
+    /// Packs a given XFER struct into exactly 4 groups of 32 byte arrays
     pub fn pack_xfer_message(&self) -> Result<Vec<u8>> {
-        // * slot0: trader(20), nonce(8), transaction(2), XChainMsgType(2)
-        //     * slot1: symbol(32)
-        // * slot2: quantity(32)
-        // * slot3: customdata(28), timestamp(4)
-        let mut slot0 = [0u8; 32];
-        slot0[0..20].copy_from_slice(&self.trader);
-        slot0[20..28].copy_from_slice(&self.nonce.to_be_bytes());
-        slot0[28..30]
-            .copy_from_slice(convert_u16_to_two_u8s_be(self.transaction.clone() as u16).as_slice());
-        slot0[30..32]
-            .copy_from_slice(convert_u16_to_two_u8s_be(self.message_type.clone() as u16).as_slice());
-        // slot0[..28].copy_from_slice(&xfer.customdata); // customdata: 18 bytes
-        // slot0[28..36].copy_from_slice(&xfer.timestamp.to_be_bytes()); // timestamp: 8 bytes
-        // slot0[36..44].copy_from_slice(&xfer.nonce.to_be_bytes()); // nonce: 8 bytes
-        // slot0[44] = xfer.transaction.clone() as u8; // transaction: 1 byte
-        // slot0[45] = XChainMsgType::XFER as u8; // message type: 1 byte
-    
-        let mut slot1 = [0u8; 32];
-        slot1.copy_from_slice(&self.symbol);
-    
-        let mut slot2 = [0u8; 32];
-        slot2.copy_from_slice(convert(&self.quantity).as_slice());
-    
-        let mut slot3 = [0u8; 32];
-        slot3[0..28].copy_from_slice(&self.customdata);
-        slot3[28..32].copy_from_slice(self.timestamp.to_be_bytes().as_slice());
-    
+        let mut slot0 = [0u8; 32]; // 18 (custom_data) | 4 (timestamp) | 8 (nonce)  | 1 (Tx) | 1 (XChainMsgType)
+        let mut slot1 = [0u8; 32]; // 32 (trader)
+        let mut slot2 = [0u8; 32]; // 32 (symbol)
+        let mut slot3 = [0u8; 32]; // 32 (quantity)
+
+        slot0[0..18].copy_from_slice(&self.custom_data);
+        slot0[18..22].copy_from_slice(&self.timestamp.to_be_bytes());
+        slot0[22..30].copy_from_slice(&self.nonce.to_be_bytes());
+        slot0[30] = self.transaction.clone() as u8;
+        slot0[31] = self.message_type.clone() as u8;
+
+        slot1.copy_from_slice(&self.trader.to_bytes());
+        slot2.copy_from_slice(&self.symbol);
+        slot3.copy_from_slice(convert_u64_4_to_u8_32_be(&self.quantity).as_slice());
+
         Ok([
             slot0.to_vec(),
             slot1.to_vec(),
@@ -70,72 +60,49 @@ impl XFER {
         ]
         .concat())
     }
-    
 }
 
-
-fn convert_u16_to_two_u8s_be(integer: u16) -> [u8; 2] {
-    [(integer >> 8) as u8, integer as u8]
-}
-
-pub fn convert(data: &[u64; 4]) -> [u8; 32] {
-    let mut res = [0; 32];
-    for i in 0..4 {
-        res[4 * i..][..8].copy_from_slice(&data[i].to_le_bytes());
-    }
-    res
-}
-
+/// Unpacks a given byte array of exactly 128 bytes into an XFER struct
 pub fn unpack_xfer_message(payload: &[u8]) -> Result<XFER> {
     if payload.len() != 128 {
         return err!(AnchorError::XFERError);
     }
 
-    let slot0 = &payload[0..32];
-    let slot1 = &payload[32..64];
-    let slot2 = &payload[64..96];
-    let slot3 = &payload[96..128];
+    let mut slot0 = [0u8; 32];
+    slot0.copy_from_slice(&payload[0..32]);
+    let mut slot1 = [0u8; 32];
+    slot1.copy_from_slice(&payload[32..64]);
+    let mut slot2 = [0u8; 32];
+    slot2.copy_from_slice(&payload[64..96]);
+    let mut slot3 = [0u8; 32];
+    slot3.copy_from_slice(&payload[96..128]);
 
-    let customdata = {
-        let mut data = [0u8; 28];
-        data.copy_from_slice(&slot0[..28]);
-        data
-    };
-    let timestamp = i32::from_be_bytes(slot0[18..22].try_into().unwrap());
+    let mut custom_data = [0u8; 18];
+    custom_data.copy_from_slice(&slot0[..18]);
+    let timestamp = u32::from_be_bytes(slot0[18..22].try_into().unwrap());
     let nonce = u64::from_be_bytes(slot0[22..30].try_into().unwrap());
-    let transaction = slot0[30];
-    let message_type = slot0[31];
+    let transaction = Tx::try_from(slot0[30])?;
+    let message_type = XChainMsgType::try_from(slot0[31])?;
 
-    XChainMsgType::try_from(message_type)?;
+    let trader = Pubkey::new_from_array(slot1);
+    let symbol = slot2;
+    let mut quantity = [0u64; 4];
+    quantity.copy_from_slice(&convert_u8_32_be_to_u64_4(&slot3));
 
-    let trader = {
-        let mut data = [0u8; 32];
-        data.copy_from_slice(slot1);
-        data
-    };
-
-    let symbol = {
-        let mut data = [0u8; 32];
-        data.copy_from_slice(slot2);
-        data
-    };
-
-    let quantity = u64::from_be_bytes(slot3[24..].try_into().unwrap());
-    let transaction = Tx::try_from(transaction)?;
-    !unimplemented!("withdraw called");
-    // Ok(XFER {
-    //     nonce,
-    //     transaction,
-    //     trader: trader.into(),
-    //     symbol,
-    //     quantity,
-    //     timestamp: i64::from(timestamp),
-    //     customdata,
-    // })
+    Ok(XFER {
+        nonce,
+        transaction,
+        trader,
+        symbol,
+        quantity,
+        timestamp,
+        custom_data,
+        message_type,
+    })
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Debug, PartialEq)]
-#[repr(u16)]
+#[repr(u8)]
 pub enum Tx {
     Withdraw,
     Deposit,
@@ -147,8 +114,8 @@ pub enum Tx {
     RecoverFunds, // Obsolete as of 2/1/2024 CD
     AddGas,
     RemoveGas,
-    AutoFill, // 10
-    CcTrade,  // Cross Chain Trade.
+    AutoFill,
+    CcTrade, // Cross Chain Trade.
     ConvertFrom,
     ConvertTo,
 }
@@ -177,10 +144,10 @@ impl TryFrom<u8> for Tx {
     }
 }
 
-#[repr(u16)]
+#[repr(u8)]
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Debug, PartialEq)]
 pub enum XChainMsgType {
-    XFER, // Add other types if needed
+    XFER,
 }
 
 impl TryFrom<u8> for XChainMsgType {
@@ -200,49 +167,124 @@ pub enum AnchorError {
     XFERError,
 }
 
+fn convert_u64_4_to_u8_32_be(data: &[u64; 4]) -> [u8; 32] {
+    let mut res = [0u8; 32];
+    for i in 0..4 {
+        res[8 * i..8 * (i + 1)].copy_from_slice(&data[i].to_be_bytes());
+    }
+    res
+}
+
+fn convert_u8_32_be_to_u64_4(data: &[u8; 32]) -> [u64; 4] {
+    let mut res = [0u64; 4];
+    for i in 0..4 {
+        res[i] = u64::from_be_bytes(data[8 * i..8 * (i + 1)].try_into().unwrap());
+    }
+    res
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::xfer::Tx::CcTrade;
+    use anchor_lang::prelude::*;
 
     #[test]
-    fn test_pack_unpack() {
-        let message = XFER {
-            nonce: 5,
-            transaction: CcTrade,
-            trader: [
-                189, 65, 233, 24, 30, 195, 207, 32, 141, 172, 96, 226, 204, 251, 242, 142, 185,
-                188, 9, 214,
-            ]
-            .try_into()
-            .unwrap(),
-            symbol: [
-                83, 79, 76, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0,
-            ],
-            quantity: [10000, 0, 0, 0],
-            timestamp: 1620000000,
-            customdata: [
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            ],
-            message_type: XChainMsgType::XFER,
-        };
-        let result = message.pack_xfer_message();
-        assert!(result.is_ok());
-        let msg = [
-            189, 65, 233, 24, 30, 195, 207, 32, 141, 172, 96, 226, 204, 251, 242, 142, 185, 188, 9,
-            214, 0, 0, 0, 0, 0, 0, 0, 5, 0, 11, 0, 0, 83, 79, 76, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 39, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 96, 143, 61, 0,
+    fn test_pack_xfer_message() {
+        let transaction = Tx::Deposit;
+        let trader = Pubkey::new_unique();
+        let symbol = *b"BTCUSD";
+        let mut padded_symbol = [0u8; 32];
+        padded_symbol[..symbol.len()].copy_from_slice(&symbol);
+        let quantity = [100u64, 200u64, 300u64, 400u64];
+        let timestamp = 1627545600;
+        let custom_data = [0u8; 18];
+        let xfer = XFER::new(
+            transaction,
+            trader,
+            padded_symbol,
+            quantity,
+            timestamp,
+            custom_data,
+        );
+
+        let packed_message = xfer.pack_xfer_message().unwrap();
+        assert_eq!(packed_message.len(), 128);
+    }
+
+    #[test]
+    fn test_pack_unpack_xfer_message() {
+        let transaction = Tx::Deposit;
+        let trader = Pubkey::new_unique();
+        let symbol = *b"BTCUSD";
+        let mut padded_symbol = [0u8; 32];
+        padded_symbol[..symbol.len()].copy_from_slice(&symbol);
+        let quantity = [100u64, 200u64, 300u64, 400u64];
+        let timestamp = 1627545600;
+        let custom_data = [0u8; 18];
+        let xfer = XFER::new(
+            transaction,
+            trader,
+            padded_symbol,
+            quantity,
+            timestamp,
+            custom_data,
+        );
+
+        let packed_message = xfer.pack_xfer_message().unwrap();
+        let unpacked_xfer = unpack_xfer_message(&packed_message).unwrap();
+
+        assert_eq!(xfer.custom_data, unpacked_xfer.custom_data);
+        assert_eq!(xfer.transaction, unpacked_xfer.transaction);
+        assert_eq!(xfer.trader, unpacked_xfer.trader);
+        assert_eq!(xfer.quantity, unpacked_xfer.quantity);
+        assert_eq!(xfer.timestamp, unpacked_xfer.timestamp);
+        assert_eq!(xfer.message_type, unpacked_xfer.message_type);
+        assert_eq!(xfer.symbol, unpacked_xfer.symbol); // Most important assertion as we are checking the unpacked symbol with the original pre-padding symbol
+        assert_eq!(xfer.nonce, unpacked_xfer.nonce);
+    }
+
+    #[test]
+    fn test_convert_u64_4_to_u8_32_be() {
+        let input = [
+            0x0102030405060708,
+            0x090a0b0c0d0e0f10,
+            0x1112131415161718,
+            0x191a1b1c1d1e1f20,
         ];
-        // let msg = [
-        //     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 96, 143, 61, 0, 0, 0, 0, 0, 0, 0, 0,
-        //     5, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 189, 65, 233, 24, 30, 195, 207, 32, 141, 172, 96, 226, 204, 251, 242, 142, 185,
-        //     188, 9, 214, 83, 79, 76, 0, 0, 0, 0, 0,
-        //     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        //     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 39, 16,
-        // ];
-        assert_eq!(result.unwrap().to_vec(), msg);
+        let expected_output: [u8; 32] = [
+            1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
+            25, 26, 27, 28, 29, 30, 31, 32,
+        ];
+        let result = convert_u64_4_to_u8_32_be(&input);
+        assert_eq!(result, expected_output);
+    }
+
+    #[test]
+    fn test_convert_u8_32_be_to_u64_4() {
+        let input: [u8; 32] = [
+            1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
+            25, 26, 27, 28, 29, 30, 31, 32,
+        ];
+        let expected_output = [
+            0x0102030405060708,
+            0x090a0b0c0d0e0f10,
+            0x1112131415161718,
+            0x191a1b1c1d1e1f20,
+        ];
+        let result = convert_u8_32_be_to_u64_4(&input);
+        assert_eq!(result, expected_output);
+    }
+
+    #[test]
+    fn test_round_trip_conversion() {
+        let original_u64_array = [
+            0x0102030405060708,
+            0x090a0b0c0d0e0f10,
+            0x1112131415161718,
+            0x191a1b1c1d1e1f20,
+        ];
+        let u8_array = convert_u64_4_to_u8_32_be(&original_u64_array);
+        let back_to_u64_array = convert_u8_32_be_to_u64_4(&u8_array);
+        assert_eq!(original_u64_array, back_to_u64_array);
     }
 }

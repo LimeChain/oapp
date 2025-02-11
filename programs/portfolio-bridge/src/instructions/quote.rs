@@ -1,6 +1,6 @@
 use crate::{
-    consts::{BRIDGE_SEED, GAS_OPTIONS},
-    state::Bridge,
+    consts::{GAS_OPTIONS, PORTFOLIO_SEED},
+    state::Portfolio,
     xfer::XFER,
     *,
 };
@@ -14,8 +14,8 @@ use oapp::endpoint::{
 #[derive(Accounts)]
 #[instruction(params: QuoteParams)]
 pub struct Quote<'info> {
-    #[account(seeds = [BRIDGE_SEED], bump = bridge.bump)]
-    pub bridge: Account<'info, Bridge>,
+    #[account(seeds = [PORTFOLIO_SEED], bump = portfolio.bump)]
+    pub portfolio: Account<'info, Portfolio>,
     #[account(seeds = [ENDPOINT_SEED], bump = endpoint.bump, seeds::program = ENDPOINT_ID)]
     pub endpoint: Account<'info, EndpointSettings>,
 }

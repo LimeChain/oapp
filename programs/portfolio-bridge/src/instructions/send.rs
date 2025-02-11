@@ -1,5 +1,5 @@
-use crate::consts::{BRIDGE_SEED, GAS_OPTIONS, REMOTE_SEED};
-use crate::state::{Bridge, Remote};
+use crate::consts::{GAS_OPTIONS, PORTFOLIO_SEED, REMOTE_SEED};
+use crate::state::{Portfolio, Remote};
 use crate::xfer::XFER;
 
 use anchor_lang::prelude::*;
@@ -22,8 +22,8 @@ pub struct Send<'info> {
         bump = remote.bump
     )]
     pub remote: Account<'info, Remote>,
-    #[account(seeds = [BRIDGE_SEED], bump = bridge.bump)]
-    pub bridge: Account<'info, Bridge>,
+    #[account(seeds = [PORTFOLIO_SEED], bump = bridge.bump)]
+    pub bridge: Account<'info, Portfolio>,
     #[account(seeds = [ENDPOINT_SEED], bump = endpoint.bump, seeds::program = ENDPOINT_ID)]
     pub endpoint: Account<'info, EndpointSettings>,
 }
@@ -32,7 +32,7 @@ pub fn send(ctx: Context<Send>, params: SendParams) -> Result<MessagingReceipt> 
     let options = decode(GAS_OPTIONS).unwrap(); //we provide const value
 
     //TODO: Calculate quote
-    
+
     let message = params.message.pack_xfer_message()?;
     let send_params = EndpointSendParams {
         dst_eid: params.dst_eid,
@@ -42,7 +42,7 @@ pub fn send(ctx: Context<Send>, params: SendParams) -> Result<MessagingReceipt> 
         native_fee: 0x11b24f,
         lz_token_fee: 0,
     };
-    let seeds: &[&[u8]] = &[BRIDGE_SEED, &[ctx.accounts.bridge.bump]];
+    let seeds: &[&[u8]] = &[PORTFOLIO_SEED, &[ctx.accounts.bridge.bump]];
 
     let receipt = oapp::endpoint_cpi::send(
         ENDPOINT_ID,

@@ -1,13 +1,13 @@
 use crate::{
-    consts::{BRIDGE_SEED, REMOTE_SEED},
-    state::{Bridge, Remote},
+    consts::{PORTFOLIO_SEED, REMOTE_SEED},
+    state::{Portfolio, Remote},
     *,
 };
 
 #[derive(Accounts)]
 #[instruction(params: SetRemoteParams)]
 pub struct SetRemote<'info> {
-    #[account(mut, address = bridge.admin)]
+    #[account(mut, address = portfolio.admin)]
     pub admin: Signer<'info>,
     #[account(
         init,
@@ -17,8 +17,8 @@ pub struct SetRemote<'info> {
         bump
     )]
     pub remote: Account<'info, Remote>,
-    #[account(seeds = [BRIDGE_SEED], bump = bridge.bump)]
-    pub bridge: Account<'info, Bridge>,
+    #[account(seeds = [PORTFOLIO_SEED], bump = portfolio.bump)]
+    pub portfolio: Account<'info, Portfolio>,
     pub system_program: Program<'info, System>,
 }
 
