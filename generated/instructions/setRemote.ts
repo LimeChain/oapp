@@ -5,9 +5,9 @@
  * See: https://github.com/metaplex-foundation/solita
  */
 
-import * as beet from '@metaplex-foundation/beet'
-import * as web3 from '@solana/web3.js'
-import { SetRemoteParams, setRemoteParamsBeet } from '../types/SetRemoteParams'
+import * as beet from "@metaplex-foundation/beet";
+import * as web3 from "@solana/web3.js";
+import { SetRemoteParams, setRemoteParamsBeet } from "../types/SetRemoteParams";
 
 /**
  * @category Instructions
@@ -15,8 +15,8 @@ import { SetRemoteParams, setRemoteParamsBeet } from '../types/SetRemoteParams'
  * @category generated
  */
 export type SetRemoteInstructionArgs = {
-  params: SetRemoteParams
-}
+  params: SetRemoteParams;
+};
 /**
  * @category Instructions
  * @category SetRemote
@@ -24,15 +24,15 @@ export type SetRemoteInstructionArgs = {
  */
 export const setRemoteStruct = new beet.BeetArgsStruct<
   SetRemoteInstructionArgs & {
-    instructionDiscriminator: number[] /* size: 8 */
+    instructionDiscriminator: number[] /* size: 8 */;
   }
 >(
   [
-    ['instructionDiscriminator', beet.uniformFixedSizeArray(beet.u8, 8)],
-    ['params', setRemoteParamsBeet],
+    ["instructionDiscriminator", beet.uniformFixedSizeArray(beet.u8, 8)],
+    ["params", setRemoteParamsBeet],
   ],
-  'SetRemoteInstructionArgs'
-)
+  "SetRemoteInstructionArgs"
+);
 /**
  * Accounts required by the _setRemote_ instruction
  *
@@ -44,16 +44,16 @@ export const setRemoteStruct = new beet.BeetArgsStruct<
  * @category generated
  */
 export type SetRemoteInstructionAccounts = {
-  admin: web3.PublicKey
-  remote: web3.PublicKey
-  bridge: web3.PublicKey
-  systemProgram?: web3.PublicKey
-  anchorRemainingAccounts?: web3.AccountMeta[]
-}
+  admin: web3.PublicKey;
+  remote: web3.PublicKey;
+  bridge: web3.PublicKey;
+  systemProgram?: web3.PublicKey;
+  anchorRemainingAccounts?: web3.AccountMeta[];
+};
 
 export const setRemoteInstructionDiscriminator = [
   41, 111, 192, 109, 136, 163, 89, 81,
-]
+];
 
 /**
  * Creates a _SetRemote_ instruction.
@@ -68,12 +68,12 @@ export const setRemoteInstructionDiscriminator = [
 export function createSetRemoteInstruction(
   accounts: SetRemoteInstructionAccounts,
   args: SetRemoteInstructionArgs,
-  programId = new web3.PublicKey('DD12vMyLdwszDCAzLhsUPwBmzJXv611dUCPhqwpZQYG4')
+  programId = new web3.PublicKey("CUmdZmnaTZh8g7oFPbQxh3GHPtSVz9Wyw1RXxmUeUxeQ")
 ) {
   const [data] = setRemoteStruct.serialize({
     instructionDiscriminator: setRemoteInstructionDiscriminator,
     ...args,
-  })
+  });
   const keys: web3.AccountMeta[] = [
     {
       pubkey: accounts.admin,
@@ -95,11 +95,11 @@ export function createSetRemoteInstruction(
       isWritable: false,
       isSigner: false,
     },
-  ]
+  ];
 
   if (accounts.anchorRemainingAccounts != null) {
     for (const acc of accounts.anchorRemainingAccounts) {
-      keys.push(acc)
+      keys.push(acc);
     }
   }
 
@@ -107,6 +107,6 @@ export function createSetRemoteInstruction(
     programId,
     keys,
     data,
-  })
-  return ix
+  });
+  return ix;
 }

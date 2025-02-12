@@ -5,9 +5,9 @@
  * See: https://github.com/metaplex-foundation/solita
  */
 
-import * as beet from '@metaplex-foundation/beet'
-import * as web3 from '@solana/web3.js'
-import { SendParams, sendParamsBeet } from '../types/SendParams'
+import * as beet from "@metaplex-foundation/beet";
+import * as web3 from "@solana/web3.js";
+import { SendParams, sendParamsBeet } from "../types/SendParams";
 
 /**
  * @category Instructions
@@ -15,8 +15,8 @@ import { SendParams, sendParamsBeet } from '../types/SendParams'
  * @category generated
  */
 export type SendInstructionArgs = {
-  params: SendParams
-}
+  params: SendParams;
+};
 /**
  * @category Instructions
  * @category Send
@@ -24,15 +24,15 @@ export type SendInstructionArgs = {
  */
 export const sendStruct = new beet.BeetArgsStruct<
   SendInstructionArgs & {
-    instructionDiscriminator: number[] /* size: 8 */
+    instructionDiscriminator: number[] /* size: 8 */;
   }
 >(
   [
-    ['instructionDiscriminator', beet.uniformFixedSizeArray(beet.u8, 8)],
-    ['params', sendParamsBeet],
+    ["instructionDiscriminator", beet.uniformFixedSizeArray(beet.u8, 8)],
+    ["params", sendParamsBeet],
   ],
-  'SendInstructionArgs'
-)
+  "SendInstructionArgs"
+);
 /**
  * Accounts required by the _send_ instruction
  *
@@ -44,13 +44,13 @@ export const sendStruct = new beet.BeetArgsStruct<
  * @category generated
  */
 export type SendInstructionAccounts = {
-  remote: web3.PublicKey
-  bridge: web3.PublicKey
-  endpoint: web3.PublicKey
-  anchorRemainingAccounts?: web3.AccountMeta[]
-}
+  remote: web3.PublicKey;
+  bridge: web3.PublicKey;
+  endpoint: web3.PublicKey;
+  anchorRemainingAccounts?: web3.AccountMeta[];
+};
 
-export const sendInstructionDiscriminator = [102, 251, 20, 187, 65, 75, 12, 69]
+export const sendInstructionDiscriminator = [102, 251, 20, 187, 65, 75, 12, 69];
 
 /**
  * Creates a _Send_ instruction.
@@ -65,12 +65,12 @@ export const sendInstructionDiscriminator = [102, 251, 20, 187, 65, 75, 12, 69]
 export function createSendInstruction(
   accounts: SendInstructionAccounts,
   args: SendInstructionArgs,
-  programId = new web3.PublicKey('DD12vMyLdwszDCAzLhsUPwBmzJXv611dUCPhqwpZQYG4')
+  programId = new web3.PublicKey("CUmdZmnaTZh8g7oFPbQxh3GHPtSVz9Wyw1RXxmUeUxeQ")
 ) {
   const [data] = sendStruct.serialize({
     instructionDiscriminator: sendInstructionDiscriminator,
     ...args,
-  })
+  });
   const keys: web3.AccountMeta[] = [
     {
       pubkey: accounts.remote,
@@ -87,11 +87,11 @@ export function createSendInstruction(
       isWritable: false,
       isSigner: false,
     },
-  ]
+  ];
 
   if (accounts.anchorRemainingAccounts != null) {
     for (const acc of accounts.anchorRemainingAccounts) {
-      keys.push(acc)
+      keys.push(acc);
     }
   }
 
@@ -99,6 +99,6 @@ export function createSendInstruction(
     programId,
     keys,
     data,
-  })
-  return ix
+  });
+  return ix;
 }

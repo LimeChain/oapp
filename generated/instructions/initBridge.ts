@@ -5,12 +5,12 @@
  * See: https://github.com/metaplex-foundation/solita
  */
 
-import * as beet from '@metaplex-foundation/beet'
-import * as web3 from '@solana/web3.js'
+import * as beet from "@metaplex-foundation/beet";
+import * as web3 from "@solana/web3.js";
 import {
   InitBridgeParams,
   initBridgeParamsBeet,
-} from '../types/InitBridgeParams'
+} from "../types/InitBridgeParams";
 
 /**
  * @category Instructions
@@ -18,8 +18,8 @@ import {
  * @category generated
  */
 export type InitBridgeInstructionArgs = {
-  params: InitBridgeParams
-}
+  params: InitBridgeParams;
+};
 /**
  * @category Instructions
  * @category InitBridge
@@ -27,15 +27,15 @@ export type InitBridgeInstructionArgs = {
  */
 export const initBridgeStruct = new beet.BeetArgsStruct<
   InitBridgeInstructionArgs & {
-    instructionDiscriminator: number[] /* size: 8 */
+    instructionDiscriminator: number[] /* size: 8 */;
   }
 >(
   [
-    ['instructionDiscriminator', beet.uniformFixedSizeArray(beet.u8, 8)],
-    ['params', initBridgeParamsBeet],
+    ["instructionDiscriminator", beet.uniformFixedSizeArray(beet.u8, 8)],
+    ["params", initBridgeParamsBeet],
   ],
-  'InitBridgeInstructionArgs'
-)
+  "InitBridgeInstructionArgs"
+);
 /**
  * Accounts required by the _initBridge_ instruction
  *
@@ -47,16 +47,16 @@ export const initBridgeStruct = new beet.BeetArgsStruct<
  * @category generated
  */
 export type InitBridgeInstructionAccounts = {
-  authority: web3.PublicKey
-  bridge: web3.PublicKey
-  solVault: web3.PublicKey
-  systemProgram?: web3.PublicKey
-  anchorRemainingAccounts?: web3.AccountMeta[]
-}
+  authority: web3.PublicKey;
+  bridge: web3.PublicKey;
+  solVault: web3.PublicKey;
+  systemProgram?: web3.PublicKey;
+  anchorRemainingAccounts?: web3.AccountMeta[];
+};
 
 export const initBridgeInstructionDiscriminator = [
   94, 43, 213, 33, 108, 54, 253, 169,
-]
+];
 
 /**
  * Creates a _InitBridge_ instruction.
@@ -71,12 +71,12 @@ export const initBridgeInstructionDiscriminator = [
 export function createInitBridgeInstruction(
   accounts: InitBridgeInstructionAccounts,
   args: InitBridgeInstructionArgs,
-  programId = new web3.PublicKey('DD12vMyLdwszDCAzLhsUPwBmzJXv611dUCPhqwpZQYG4')
+  programId = new web3.PublicKey("CUmdZmnaTZh8g7oFPbQxh3GHPtSVz9Wyw1RXxmUeUxeQ")
 ) {
   const [data] = initBridgeStruct.serialize({
     instructionDiscriminator: initBridgeInstructionDiscriminator,
     ...args,
-  })
+  });
   const keys: web3.AccountMeta[] = [
     {
       pubkey: accounts.authority,
@@ -98,11 +98,11 @@ export function createInitBridgeInstruction(
       isWritable: false,
       isSigner: false,
     },
-  ]
+  ];
 
   if (accounts.anchorRemainingAccounts != null) {
     for (const acc of accounts.anchorRemainingAccounts) {
-      keys.push(acc)
+      keys.push(acc);
     }
   }
 
@@ -110,6 +110,6 @@ export function createInitBridgeInstruction(
     programId,
     keys,
     data,
-  })
-  return ix
+  });
+  return ix;
 }

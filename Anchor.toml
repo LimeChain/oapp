@@ -1,16 +1,16 @@
 [toolchain]
-anchor_version = "0.29.0"
-solana_version = "1.17.31"
+anchor_version = "0.30.1"
+solana_version = "2.1.14"
 
 [features]
 seeds = false
 skip-lint = false
 
 [programs.devnet]
-portfolio_bridge = "DD12vMyLdwszDCAzLhsUPwBmzJXv611dUCPhqwpZQYG4"
+portfolio = "CUmdZmnaTZh8g7oFPbQxh3GHPtSVz9Wyw1RXxmUeUxeQ"
 
 [programs.localnet]
-portfolio_bridge = "DD12vMyLdwszDCAzLhsUPwBmzJXv611dUCPhqwpZQYG4"
+portfolio = "CUmdZmnaTZh8g7oFPbQxh3GHPtSVz9Wyw1RXxmUeUxeQ"
 
 [registry]
 url = "https://api.apr.dev"

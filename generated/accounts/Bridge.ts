@@ -93,7 +93,7 @@ export class Bridge implements BridgeArgs {
    */
   static gpaBuilder(
     programId: web3.PublicKey = new web3.PublicKey(
-      'DD12vMyLdwszDCAzLhsUPwBmzJXv611dUCPhqwpZQYG4'
+      'CUmdZmnaTZh8g7oFPbQxh3GHPtSVz9Wyw1RXxmUeUxeQ'
     )
   ) {
     return beetSolana.GpaBuilder.fromStruct(programId, bridgeBeet)

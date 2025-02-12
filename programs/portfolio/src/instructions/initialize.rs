@@ -1,9 +1,11 @@
 use crate::consts::{ADMIN_SEED, PORTFOLIO_SEED, SOL_VAULT_SEED};
+use crate::cpi_utils::{create_instruction_data, RegisterOAppParams};
 use crate::state::{Admin, GlobalConfig, Portfolio, TokenList};
-use anchor_lang::prelude::*;
-use anchor_lang::{Accounts, AnchorDeserialize, AnchorSerialize, Key};
-use oapp::endpoint::{instructions::RegisterOAppParams, ID as ENDPOINT_ID};
-use solana_program::pubkey::Pubkey;
+use anchor_lang::solana_program::instruction::Instruction;
+use anchor_lang::solana_program::program::invoke_signed;
+use anchor_lang::{
+    prelude::*, solana_program::pubkey::Pubkey, Accounts, AnchorDeserialize, AnchorSerialize, Key,
+};
 
 // #[derive(Accounts)]
 // pub struct InitBridge<'info> {
@@ -33,26 +35,49 @@ pub fn initialize(ctx: Context<Initialize>, params: InitializeParams) -> Result<
     portfolio.bump = ctx.bumps.portfolio;
 
     // init global config
-
     portfolio.global_config.default_chain_id = params.default_chain_id;
     portfolio.global_config.allow_deposit = true;
     portfolio.global_config.program_paused = false;
     portfolio.global_config.native_deposits_restricted = false;
     portfolio.global_config.src_chain_id = params.src_chain_id;
 
-    msg!("Global config initialized");
-
-    let seeds = &[PORTFOLIO_SEED, &[ctx.bumps.portfolio]];
-    let params = RegisterOAppParams {
+    // prepare CPI
+    let register_params = RegisterOAppParams {
         delegate: ctx.accounts.authority.key(),
     };
-    oapp::endpoint_cpi::register_oapp(
-        ENDPOINT_ID,
-        portfolio.key(),
+
+    let seeds: &[&[&[u8]]] = &[&[PORTFOLIO_SEED, &[ctx.accounts.portfolio.bump]]];
+    let cpi_data = create_instruction_data(&register_params, "register_oapp");
+
+    let portfolio_key = ctx.accounts.portfolio.key();
+    let accounts_metas: Vec<AccountMeta> = ctx
+        .remaining_accounts
+        .iter()
+        .skip(1)
+        .map(|account| AccountMeta {
+            pubkey: *account.key,
+            is_signer: account.key() == portfolio_key || account.is_signer,
+            is_writable: account.is_writable,
+        })
+        .collect();
+
+    // Invoke CPI
+    invoke_signed(
+        &Instruction {
+            program_id: ctx.accounts.endpoint_program.key(),
+            accounts: accounts_metas,
+            data: cpi_data,
+        },
         ctx.remaining_accounts,
         seeds,
-        params,
     )?;
+    // oapp::endpoint_cpi::register_oapp(
+    //     ENDPOINT_ID,
+    //     bridge.key(),
+    //     ctx.remaining_accounts,
+    //     seeds,
+    //     register_params,
+    // )?;
 
     Ok(())
 }
@@ -117,4 +142,6 @@ pub struct Initialize<'info> {
     #[account(mut)]
     pub authority: Signer<'info>,
     pub system_program: Program<'info, System>,
+    /// CHECK: endpoint program,
+    pub endpoint_program: AccountInfo<'info>,
 }

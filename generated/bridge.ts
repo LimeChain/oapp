@@ -109,10 +109,10 @@ export class Bridge {
       {
         params: {
           portfolio: new PublicKey(
-            "DD12vMyLdwszDCAzLhsUPwBmzJXv611dUCPhqwpZQYG4"
+            "CUmdZmnaTZh8g7oFPbQxh3GHPtSVz9Wyw1RXxmUeUxeQ"
           ),
           mainnetRfq: new PublicKey(
-            "DD12vMyLdwszDCAzLhsUPwBmzJXv611dUCPhqwpZQYG4"
+            "CUmdZmnaTZh8g7oFPbQxh3GHPtSVz9Wyw1RXxmUeUxeQ"
           ),
           defaultChainId: 12,
           endpointProgram: endpoint.program,

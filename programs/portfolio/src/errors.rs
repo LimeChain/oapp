@@ -21,6 +21,8 @@ pub enum PortfolioError {
     UnsupportedTransaction,
     #[msg("P-ZETD-01")]
     ZeroTokenQuantity,
+    #[msg("LZ-QUOTE-ERROR")]
+    LzQuoteError,
 }
 
 #[error_code]

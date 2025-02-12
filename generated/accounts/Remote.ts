@@ -5,9 +5,9 @@
  * See: https://github.com/metaplex-foundation/solita
  */
 
-import * as beet from '@metaplex-foundation/beet'
-import * as web3 from '@solana/web3.js'
-import * as beetSolana from '@metaplex-foundation/beet-solana'
+import * as beet from "@metaplex-foundation/beet";
+import * as web3 from "@solana/web3.js";
+import * as beetSolana from "@metaplex-foundation/beet-solana";
 
 /**
  * Arguments used to create {@link Remote}
@@ -15,11 +15,11 @@ import * as beetSolana from '@metaplex-foundation/beet-solana'
  * @category generated
  */
 export type RemoteArgs = {
-  address: number[] /* size: 32 */
-  bump: number
-}
+  address: number[] /* size: 32 */;
+  bump: number;
+};
 
-export const remoteDiscriminator = [142, 141, 61, 250, 205, 173, 146, 34]
+export const remoteDiscriminator = [142, 141, 61, 250, 205, 173, 146, 34];
 /**
  * Holds the data for the {@link Remote} Account and provides de/serialization
  * functionality for that data
@@ -37,7 +37,7 @@ export class Remote implements RemoteArgs {
    * Creates a {@link Remote} instance from the provided args.
    */
   static fromArgs(args: RemoteArgs) {
-    return new Remote(args.address, args.bump)
+    return new Remote(args.address, args.bump);
   }
 
   /**
@@ -48,7 +48,7 @@ export class Remote implements RemoteArgs {
     accountInfo: web3.AccountInfo<Buffer>,
     offset = 0
   ): [Remote, number] {
-    return Remote.deserialize(accountInfo.data, offset)
+    return Remote.deserialize(accountInfo.data, offset);
   }
 
   /**
@@ -65,11 +65,11 @@ export class Remote implements RemoteArgs {
     const accountInfo = await connection.getAccountInfo(
       address,
       commitmentOrConfig
-    )
+    );
     if (accountInfo == null) {
-      throw new Error(`Unable to find Remote account at ${address}`)
+      throw new Error(`Unable to find Remote account at ${address}`);
     }
-    return Remote.fromAccountInfo(accountInfo, 0)[0]
+    return Remote.fromAccountInfo(accountInfo, 0)[0];
   }
 
   /**
@@ -80,10 +80,10 @@ export class Remote implements RemoteArgs {
    */
   static gpaBuilder(
     programId: web3.PublicKey = new web3.PublicKey(
-      'DD12vMyLdwszDCAzLhsUPwBmzJXv611dUCPhqwpZQYG4'
+      "CUmdZmnaTZh8g7oFPbQxh3GHPtSVz9Wyw1RXxmUeUxeQ"
     )
   ) {
-    return beetSolana.GpaBuilder.fromStruct(programId, remoteBeet)
+    return beetSolana.GpaBuilder.fromStruct(programId, remoteBeet);
   }
 
   /**
@@ -91,7 +91,7 @@ export class Remote implements RemoteArgs {
    * @returns a tuple of the account data and the offset up to which the buffer was read to obtain it.
    */
   static deserialize(buf: Buffer, offset = 0): [Remote, number] {
-    return remoteBeet.deserialize(buf, offset)
+    return remoteBeet.deserialize(buf, offset);
   }
 
   /**
@@ -102,7 +102,7 @@ export class Remote implements RemoteArgs {
     return remoteBeet.serialize({
       accountDiscriminator: remoteDiscriminator,
       ...this,
-    })
+    });
   }
 
   /**
@@ -110,7 +110,7 @@ export class Remote implements RemoteArgs {
    * {@link Remote}
    */
   static get byteSize() {
-    return remoteBeet.byteSize
+    return remoteBeet.byteSize;
   }
 
   /**
@@ -126,7 +126,7 @@ export class Remote implements RemoteArgs {
     return connection.getMinimumBalanceForRentExemption(
       Remote.byteSize,
       commitment
-    )
+    );
   }
 
   /**
@@ -134,7 +134,7 @@ export class Remote implements RemoteArgs {
    * hold {@link Remote} data.
    */
   static hasCorrectByteSize(buf: Buffer, offset = 0) {
-    return buf.byteLength - offset === Remote.byteSize
+    return buf.byteLength - offset === Remote.byteSize;
   }
 
   /**
@@ -145,7 +145,7 @@ export class Remote implements RemoteArgs {
     return {
       address: this.address,
       bump: this.bump,
-    }
+    };
   }
 }
 
@@ -156,14 +156,14 @@ export class Remote implements RemoteArgs {
 export const remoteBeet = new beet.BeetStruct<
   Remote,
   RemoteArgs & {
-    accountDiscriminator: number[] /* size: 8 */
+    accountDiscriminator: number[] /* size: 8 */;
   }
 >(
   [
-    ['accountDiscriminator', beet.uniformFixedSizeArray(beet.u8, 8)],
-    ['address', beet.uniformFixedSizeArray(beet.u8, 32)],
-    ['bump', beet.u8],
+    ["accountDiscriminator", beet.uniformFixedSizeArray(beet.u8, 8)],
+    ["address", beet.uniformFixedSizeArray(beet.u8, 32)],
+    ["bump", beet.u8],
   ],
   Remote.fromArgs,
-  'Remote'
-)
+  "Remote"
+);

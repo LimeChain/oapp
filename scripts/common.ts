@@ -15,7 +15,7 @@ const executorProgram = new PublicKey(
 ); // executor program id, mainnet and testnet are the same
 
 const bridgeProgram = new Bridge(
-  new PublicKey("DD12vMyLdwszDCAzLhsUPwBmzJXv611dUCPhqwpZQYG4")
+  new PublicKey("CUmdZmnaTZh8g7oFPbQxh3GHPtSVz9Wyw1RXxmUeUxeQ")
 );
 
 const connection = new Connection("https://api.devnet.solana.com");
